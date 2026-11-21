@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phrasal Verbs: Situation Cards</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-main: #f4f4f4;
+            --text-muted: #b0b0b0;
+            --accent: #d4af37;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--accent);
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            margin-bottom: 50px;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            width: 100%;
+            max-width: 1300px;
+        }
+
+        .card-container {
+            perspective: 1000px;
+            height: 420px;
+            cursor: pointer;
+        }
+
+        .card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: 10px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+        }
+
+        .card-container.is-flipped .card {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            border-radius: 10px;
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* ЛИЦЕВАЯ СТОРОНА */
+        .card-front {
+            background-color: var(--card-bg);
+            justify-content: center;
+            align-items: center;
+            background-image: radial-gradient(circle at center, #2a2a2a 0%, #1e1e1e 100%);
+        }
+
+        .card-number {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 10rem;
+            color: var(--accent);
+            line-height: 1;
+            margin: 0;
+            text-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .card-front-hint {
+            position: absolute;
+            bottom: 25px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        /* ОБРАТНАЯ СТОРОНА */
+        .card-back {
+            background-color: var(--card-bg);
+            transform: rotateY(180deg);
+            padding: 35px 30px;
+            justify-content: flex-start;
+            border-left: 5px solid var(--accent);
+        }
+
+        .card-back-header {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .situation-text {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            color: var(--text-main);
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .starter-text {
+            font-style: italic;
+            color: #c8c8c8;
+            font-size: 1.15rem;
+            margin-bottom: 20px;
+        }
+
+        /* Линия для записи ответа */
+        .answer-line {
+            margin-top: auto;
+            border-bottom: 2px dashed #555;
+            width: 90%;
+            height: 40px;
+            align-self: center;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 5px;
+        }
+        
+        .answer-line::after {
+            content: "Your answer...";
+            font-size: 0.95rem;
+            color: #666;
+            font-style: italic;
+            letter-spacing: 1px;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 600px) {
+            .cards-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 2.5rem; }
+            .card-container { height: 450px; }
+            .situation-text { font-size: 1.15rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Situation Cards</h1>
+    <p class="subtitle">Click any card to flip it and reveal the situation</p>
+
+    <div class="cards-grid" id="cards-grid">
+        <!-- Карточки генерируются скриптом -->
+    </div>
+
+    <script>
+        const cardsData = [
+            { id: 1, situation: "You are cleaning your grandparents' attic and find an old box with mysterious letters inside.", question: "What happened?", starter: "I..." },
+            { id: 2, situation: "You are walking in the park and suddenly see a stray puppy hiding under a bench.", question: "What happened?", starter: "While walking, I..." },
+            { id: 3, situation: "It is winter. You went outside without a jacket, got wet in the rain, and now you have a high fever.", question: "What's wrong with you?", starter: "I..." },
+            { id: 4, situation: "You ate some strange street food, and now your stomach hurts badly.", question: "What happened to you?", starter: "I think I..." },
+            { id: 5, situation: "You are standing behind the curtains at the school talent show. The music starts, and it's your turn to walk onto the stage.", question: "What are you about to do?", starter: "I am about to..." },
+            { id: 6, situation: "Your favorite band just released a new album, and you are listening to it right now.", question: "What happened?", starter: "Their new album has just..." },
+            { id: 7, situation: "You are alone in an old, dark house. Suddenly, you hear a strange noise upstairs. You feel very scared.", question: "How do you feel?", starter: "A strange feeling..." },
+            { id: 8, situation: "You are watching a sad movie about a dog. Suddenly, you start crying, but you didn't expect to.", question: "What happened?", starter: "A wave of sadness..." },
+            { id: 9, situation: "Your teacher asks the class to organize a school party. You have a brilliant idea for a theme.", question: "What did you do?", starter: "I..." },
+            { id: 10, situation: "Your friend is sad because he lost his phone. You suggest a plan to help him find it.", question: "What did you do?", starter: "I..." }
+        ];
+
+        const grid = document.getElementById('cards-grid');
+
+        cardsData.forEach(card => {
+            const cardHTML = `
+                <div class="card-container">
+                    <div class="card">
+                        <div class="card-face card-front">
+                            <div class="card-number">${card.id}</div>
+                            <div class="card-front-hint">Tap to open</div>
+                        </div>
+                        
+                        <div class="card-face card-back">
+                            <div>
+                                <div class="card-back-header">Situation #${card.id}</div>
+                                <div class="situation-text">${card.situation}</div>
+                                <div class="question-text">${card.question}</div>
+                                <div class="starter-text">Start: "${card.starter}"</div>
+                            </div>
+                            <div class="answer-line"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            grid.insertAdjacentHTML('beforeend', cardHTML);
+        });
+
+        document.querySelectorAll('.card-container').forEach(container => {
+            container.addEventListener('click', () => {
+                container.classList.toggle('is-flipped');
+            });
+        });
+    </script>
+</body>
+</html>
